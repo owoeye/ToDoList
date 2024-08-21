@@ -1,0 +1,67 @@
+{% extends 'bootstrap/base.html' %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+{% endblock %}
+
+{% block title %}To-Do List{% endblock %}
+
+{% block content %}
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">To-Do List</a>
+    <!-- Right-aligned button -->
+    <form class="form-inline ml-auto">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="button">Save 💾</button>
+    </form>
+</nav>
+
+<!-- Main Container -->
+<div class="container mt-5">
+    <h1>To-Do List</h1>
+    <form action="/add" method="POST" class="form-inline mt-3 mb-3">
+        <div class="form-group mx-sm-3">
+            <label for="todo" class="sr-only">New ToDo</label>
+            <input type="text" class="form-control" id="todo" name="item" placeholder="Enter new todo">
+        </div>
+        <button type="submit" class="btn btn-primary">Add</button>
+    </form>
+    <ul class="list-group">
+        {% for todo in todos %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {% if edit_mode and id == todo.id %}
+                <form action="/edit/{{ todo.id }}" method="POST" class="form-inline mt-3 mb-3">
+                    <div class="form-group mx-sm-3">
+                        <label for="edit_todo" class="sr-only">Edit ToDo</label>
+                        <input type="text" class="form-control" id="edit_todo" name="edited_item" value="{{ todo.item }}">
+                    </div>
+                </form>
+                {% else %}
+                <div class="form-check">
+                    {% if todo.checked %}
+                        <input class="form-check-input" type="checkbox" name="todo_item" id="todo_list" onclick="window.location.href='/done/{{ todo.id }}'" checked>
+                        <label class="form-check-label text-muted" for="todo_list">
+                            <s>{{ todo.item }}</s>
+                        </label>
+                    {% else %}
+                        <input class="form-check-input" type="checkbox" name="todo_item" id="todo_list" onclick="window.location.href='/done/{{ todo.id }}'">
+                        <label class="form-check-label" for="todo_list">
+                            {{ todo.item }}
+                        </label>
+                    {% endif %}
+                </div>
+                {% endif %}
+                <a href="/edit/{{ todo.id }}" class="btn btn-light btn-sm ml-auto">✏️</a>
+                <a href="/delete/{{ todo.id }}" class="btn btn-light btn-sm">🗑️</a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+{% endblock %}
